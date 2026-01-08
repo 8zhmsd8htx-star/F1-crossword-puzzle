@@ -15,6 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // grab the grid container element
     const gridElement = document.getElementById('grid');
 
+    // function to clear active cells
+    const clearActiveCells = () => {
+        document
+        .querySelectorAll('.cell.active')
+        .forEach(cell => cell.classList.remove('active'));
+    };
+
     // iterate over the grid layout to create cells
     for (let row = 0; row < gridLayout.length; row++) {
         for (let col = 0; col < gridLayout[row].length; col++) {
@@ -30,6 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 input.classList.add('cell-input');
 
                 cellDiv.appendChild(input);
+
+                // click highlight functionality
+                cellDiv.addEventListener('click', () => {
+                    clearActiveCells();
+                    cellDiv.classList.add('active');
+                    input.focus();
+                });
             } else {
                 cellDiv.classList.add('block');
             }
