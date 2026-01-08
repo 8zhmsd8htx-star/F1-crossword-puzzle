@@ -1,0 +1,30 @@
+/* reset body */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: sans-serif;
+    padding: 2rem;
+}
+
+/* style grid */
+#grid {
+    display: grid;
+    grid-template-columns: repeat(5, 40px);
+    grid-template-rows: repeat(5, 40px);
+    gap: 2px;
+}
+
+/* style normal grid cells */
+.cell {
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+/* style black cells */
+.block {
+    background-color: #000;
+}
