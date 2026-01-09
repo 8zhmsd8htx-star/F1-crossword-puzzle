@@ -31,6 +31,15 @@ document.addEventListener('DOMContentLoaded', () => {
             // set cell class based on value
             if (value === '1') {
                 cellDiv.classList.add('cell');
+
+                // add number indicator for certain cells
+                if (row === 0 && col === 0) {
+                    const numberSpan = document.createElement('span');
+                    numberSpan.classList.add('cell-number');
+                    numberSpan.textContent = '1';
+                    cellDiv.appendChild(numberSpan)
+                }
+
                 // make letter cells editable
                 const input = document.createElement('input');
                 input.setAttribute('maxlength', '1');

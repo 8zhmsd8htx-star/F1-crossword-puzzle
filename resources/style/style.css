@@ -21,6 +21,17 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 1.25rem;
+    position: relative;
+}
+
+/* style cell numbers */
+.cell-number {
+    position: absolute;
+    top: 2px;
+    left: 3px;
+    font-size: 0.6rem;
+    color: #555;
+    pointer-events: none;
 }
 
 /* style black cells */
@@ -52,4 +63,19 @@ body {
 /* style active cell */
 .cell.active {
     background: #d7bbeb;
+}
+
+/* style questions section */
+#questions {
+    margin-top: 2rem;
+    width: 400px;
+    font-size: 0.9rem;
+}
+
+#questions h2 {
+    margin-bottom: 0.5rem;
+}
+
+#questions ol {
+    padding-left: 1.2rem;
 }
