@@ -8,6 +8,13 @@ const gridLayout = [
     ['1', '1', '1', '1', '1']
 ];
 
+// Define number cells and their positions
+const clueNumbers = {
+    '0-0': 1,
+    '4-0': 2,
+    '0-4': 3,
+};
+
 // Function to create the grid in the HTML
 
 // event listener to run the code after the DOM is fully loaded
@@ -33,11 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 cellDiv.classList.add('cell');
 
                 // add number indicator for certain cells
-                if (row === 0 && col === 0) {
+                const key = `${row}-${col}`;
+                if (clueNumbers[key]) {
                     const numberSpan = document.createElement('span');
                     numberSpan.classList.add('cell-number');
-                    numberSpan.textContent = '1';
-                    cellDiv.appendChild(numberSpan)
+                    numberSpan.textContent = clueNumbers[key];
+                    cellDiv.appendChild(numberSpan);
                 }
 
                 // make letter cells editable
