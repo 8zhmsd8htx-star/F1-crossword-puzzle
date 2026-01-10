@@ -35,7 +35,10 @@ const clueNumbers = {
     '12-2': 14,
 };
 
-
+let currentSelectedCell = {
+	x: 0,
+	y: 0
+}
 
 // Function to create the grid in the HTML
 
@@ -60,6 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // set cell class based on value
             if (value === '1') {
                 cellDiv.classList.add('cell');
+		     cellDiv.dataset.x = col
+		     cellDiv.dataset.y = row
 
                 // add number indicator for certain cells
                 const key = `${row}-${col}`;
@@ -80,9 +85,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 // click highlight functionality
                 cellDiv.addEventListener('click', () => {
                     clearActiveCells();
-                    cellDiv.classList.add('active');
-                    input.focus();
+			   activateCell(
+				parseInt(cellDiv.dataset.x),
+				parseInt(cellDiv.dataset.y)
+			   )
                 });
+
+		    input.addEventListener('keyup', () => {
+			clearActiveCells()
+			activateCell(
+			  parseInt(cellDiv.dataset.x),
+			  parseInt(cellDiv.dataset.y) + 1
+                 )
+     		    })
             } else {
                 cellDiv.classList.add('block');
                 cellDiv.dataset.active = 'false';
@@ -93,3 +108,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
+function activateCell(x, y) {
+  let cell = document.querySelector(
+    "[data-x='" + x + "'][data-y='" + y + "']"
+  )
+  let input = cell.querySelector("input")
+  cell.classList.add("active")
+  input.focus();
+  currentSelectedCell.x = x
+  currentSelectedCell.y = y
+}
