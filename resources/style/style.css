@@ -19,7 +19,7 @@ body {
 .cell {
     display: flex;
     align-items: center;
-    border: 1px solid #ccc;
+    border: 1px solid #292929;
     justify-content: center;
     font-size: 1.25rem;
     position: relative;
