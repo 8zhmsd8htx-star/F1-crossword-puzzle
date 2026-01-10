@@ -10,8 +10,8 @@ body {
 /* style grid */
 #grid {
     display: grid;
-    grid-template-columns: repeat(5, 40px);
-    grid-template-rows: repeat(5, 40px);
+    grid-template-columns: repeat(15, 40px);
+    grid-template-rows: repeat(15, 40px);
     gap: 0;
 }
 
@@ -19,6 +19,7 @@ body {
 .cell {
     display: flex;
     align-items: center;
+    border: 1px solid #ccc;
     justify-content: center;
     font-size: 1.25rem;
     position: relative;
@@ -32,16 +33,6 @@ body {
     font-size: 0.6rem;
     color: #555;
     pointer-events: none;
-}
-
-/* style black cells */
-.block {
-    background: #000;
-}
-
-.cell, .block {
-    border: 1px solid #ccc;
-    box-sizing: border-box;
 }
 
 /* style cell inputs */
