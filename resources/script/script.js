@@ -63,8 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // set cell class based on value
             if (value === '1') {
                 cellDiv.classList.add('cell');
-		     cellDiv.dataset.x = col
-		     cellDiv.dataset.y = row
+		        cellDiv.dataset.x = col;
+		        cellDiv.dataset.y = row;
 
                 // add number indicator for certain cells
                 const key = `${row}-${col}`;
@@ -80,27 +80,56 @@ document.addEventListener('DOMContentLoaded', () => {
                 input.setAttribute('maxlength', '1');
                 input.classList.add('cell-input');
 
+                // allways put caret at the end of input on focus
+                input.addEventListener('focus', () => {
+                    const len = input.value.length;
+                    input.setSelectionRange(len, len);
+                });
+
                 cellDiv.appendChild(input);
 
                 // click highlight functionality
                 cellDiv.addEventListener('click', () => {
                     clearActiveCells();
-			   activateCell(
-				parseInt(cellDiv.dataset.x),
-				parseInt(cellDiv.dataset.y)
-			   )
+                    activateCell(
+                        parseInt(cellDiv.dataset.x),
+                        parseInt(cellDiv.dataset.y)
+                    );
                 });
 
-		    input.addEventListener('keyup', () => {
-			clearActiveCells()
-			activateCell(
-			  parseInt(cellDiv.dataset.x),
-			  parseInt(cellDiv.dataset.y) + 1
-                 )
-     		    })
-            } else {
-                cellDiv.classList.add('block');
-                cellDiv.dataset.active = 'false';
+                // keyboard navigation functionality
+                input.addEventListener('keydown', (event) => {
+                    const x = parseInt(cellDiv.dataset.x);
+                    const y = parseInt(cellDiv.dataset.y);
+
+                    let newX = x;
+                    let newY = y;
+
+                    switch (event.key) {
+                        case 'ArrowUp':
+                            newY = y - 1;
+                            break;
+                        case 'ArrowDown':
+                            newY = y + 1;
+                            break;
+                        case 'ArrowLeft':
+                            newX = x - 1;
+                            break;
+                        case 'ArrowRight':
+                            newX = x + 1;
+                            break;
+                        default:
+                            return;
+                    }
+
+                    clearActiveCells();
+                    event.preventDefault();
+                    activateCell(newX, newY);
+                });
+
+                } else {
+                    cellDiv.classList.add('block');
+                    cellDiv.dataset.active = 'false';
             }
 
             // append the cell to the grid container
@@ -110,12 +139,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function activateCell(x, y) {
-  let cell = document.querySelector(
-    "[data-x='" + x + "'][data-y='" + y + "']"
-  )
-  let input = cell.querySelector("input")
-  cell.classList.add("active")
-  input.focus();
-  currentSelectedCell.x = x
-  currentSelectedCell.y = y
+    let cell = document.querySelector(
+        "[data-x='" + x + "'][data-y='" + y + "']"
+    );
+
+    let input = cell.querySelector("input");
+    cell.classList.add("active");
+    input.focus();
+
+    currentSelectedCell.x = x;
+    currentSelectedCell.y = y;
 }
