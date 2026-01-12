@@ -38,7 +38,7 @@ const clueNumbers = {
 let currentSelectedCell = {
 	x: 0,
 	y: 0
-}
+};
 
 // Function to create the grid in the HTML
 
@@ -107,15 +107,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     switch (event.key) {
                         case 'ArrowUp':
+                            currentDirection = 'down'; // vertical
                             newY = y - 1;
                             break;
                         case 'ArrowDown':
+                            currentDirection = 'down';
                             newY = y + 1;
                             break;
                         case 'ArrowLeft':
+                            currentDirection = 'across'; // horizontal
                             newX = x - 1;
                             break;
                         case 'ArrowRight':
+                            currentDirection = 'across';
                             newX = x + 1;
                             break;
                         default:
@@ -125,6 +129,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     clearActiveCells();
                     event.preventDefault();
                     activateCell(newX, newY);
+                });
+
+                // input handling to move to next cell
+                input.addEventListener('keyup', (event) => {
+
+                    const x = parseInt(cellDiv.dataset.x);
+                    const y = parseInt(cellDiv.dataset.y);
+                    
+                    if (event.key.length === 1 && event.key.match(/^[a-zA-Z]$/)) {
+                        let newX = x;
+                        let newY = y;
+
+                        if (currentDirection === 'across') {
+                            newX = x + 1;
+                        } else {
+                            newY = y + 1;
+                        };
+
+                        clearActiveCells();
+                        activateCell(newX, newY);
+                    }
                 });
 
                 } else {
