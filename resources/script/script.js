@@ -1,5 +1,5 @@
 
-// Define the 5x5 grid layout using arrays of strings
+// Define the grid layout using arrays of strings
 const gridLayout = [
     ['1','1','1','1','1','1','1','0','0','0','0','0','0','0','0'], 
     ['0','0','0','0','0','1','0','0','0','0','0','0','0','0','1'], 
@@ -133,10 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // input handling to move to next cell
                 input.addEventListener('keyup', (event) => {
-
+                    
                     const x = parseInt(cellDiv.dataset.x);
                     const y = parseInt(cellDiv.dataset.y);
-                    
                     if (event.key.length === 1 && event.key.match(/^[a-zA-Z]$/)) {
                         let newX = x;
                         let newY = y;
@@ -172,6 +171,53 @@ function activateCell(x, y) {
     cell.classList.add("active");
     input.focus();
 
+    // infer direction based on surrounding cells
+    currentDirection = inferDirection(x, y);
+
     currentSelectedCell.x = x;
     currentSelectedCell.y = y;
+}
+
+function inferDirection(x, y) {
+    const hasLeft = hasInputCell(x - 1, y);
+    const hasRight = hasInputCell(x + 1, y);
+    const hasUp = hasInputCell(x, y - 1);
+    const hasDown = hasInputCell(x, y + 1);
+
+    const hasHoriz = hasLeft || hasRight;
+    const hasVert = hasUp || hasDown;
+
+    // only for single direction cases
+    if (hasHoriz && !hasVert) {
+        return 'across';
+    }
+    
+    if (hasVert && !hasHoriz) {
+        return 'down';
+    }
+
+    // start of word cases
+    if (hasRight && !hasLeft && !hasVert) {
+        return 'across';
+    }
+    
+    if (hasDown && !hasUp && !hasHoriz) {
+        return 'down';
+    }
+
+    // if both directions at intersection, don't change
+    return currentDirection;
+}
+
+function getCell(x, y) {
+    return document.querySelector(
+        "[data-x='" + x + "'][data-y='" + y + "']"
+    );
+}
+
+function hasInputCell(x, y) {
+    const cell = getCell(x, y);
+    if (!cell) return false;
+    const input = cell.querySelector("input");
+    return !!input; // return true if input exists
 }
