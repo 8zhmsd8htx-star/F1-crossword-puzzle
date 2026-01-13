@@ -35,10 +35,26 @@ const clueNumbers = {
     '12-2': 14,
 };
 
-let currentSelectedCell = {
-	x: 0,
-	y: 0
+// Define clue directions based on their starting positions
+const clueDirection = {
+    '0-0': 'across',
+    '0-5': 'down',
+    '1-14': 'down',
+    '2-0': 'down',
+    '5-0': 'across',
+    '6-5': 'across',
+    '7-3': 'down',
+    '8-0': 'across',
+    '8-5': 'across',
+    '8-7': 'down',
+    '10-2': 'across',
+    '10-11': 'down',
+    '11-7': 'across',
+    '12-2': 'across',
 };
+
+let currentSelectedCell = { x: 0, y: 0 };
+let currentDirection = 'across';
 
 // Function to create the grid in the HTML
 
@@ -93,7 +109,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     clearActiveCells();
                     activateCell(
                         parseInt(cellDiv.dataset.x),
-                        parseInt(cellDiv.dataset.y)
+                        parseInt(cellDiv.dataset.y),
+                        true
                     );
                 });
 
@@ -136,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     const x = parseInt(cellDiv.dataset.x);
                     const y = parseInt(cellDiv.dataset.y);
+
                     if (event.key.length === 1 && event.key.match(/^[a-zA-Z]$/)) {
                         let newX = x;
                         let newY = y;
@@ -162,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-function activateCell(x, y) {
+function activateCell(x, y, useClueDirection = false) {
     let cell = document.querySelector(
         "[data-x='" + x + "'][data-y='" + y + "']"
     );
@@ -171,8 +189,15 @@ function activateCell(x, y) {
     cell.classList.add("active");
     input.focus();
 
-    // infer direction based on surrounding cells
-    currentDirection = inferDirection(x, y);
+    // Determine direction
+    const key = `${y}-${x}`;
+    const forcedDir = clueDirection[key];
+    // if useClueDirection is true and there's a forced direction, use it
+    if (useClueDirection && forcedDir) {
+        currentDirection = forcedDir;
+    } else {
+        currentDirection = inferDirection(x, y);
+    }
 
     currentSelectedCell.x = x;
     currentSelectedCell.y = y;
@@ -193,15 +218,6 @@ function inferDirection(x, y) {
     }
     
     if (hasVert && !hasHoriz) {
-        return 'down';
-    }
-
-    // start of word cases
-    if (hasRight && !hasLeft && !hasVert) {
-        return 'across';
-    }
-    
-    if (hasDown && !hasUp && !hasHoriz) {
         return 'down';
     }
 
