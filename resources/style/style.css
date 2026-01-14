@@ -56,6 +56,10 @@ body {
     background: #d7bbeb;
 }
 
+.cell.word-highlight {
+    background: #ffeaa7;
+}
+
 /* style questions section */
 #questions {
     margin-top: 2rem;
