@@ -201,21 +201,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // input handling to move to next cell
                 input.addEventListener('keyup', (event) => {
-                    
-                    const x = parseInt(cellDiv.dataset.x);
-                    const y = parseInt(cellDiv.dataset.y);
-
                     if (event.key.length === 1 && event.key.match(/^[a-zA-Z]$/)) {
-                        let newX = x;
-                        let newY = y;
+                                            
+                        const x = parseInt(cellDiv.dataset.x);
+                        const y = parseInt(cellDiv.dataset.y);
 
                         checkWordAtCell(x, y);
 
+                        // determine direction step
+                        let stepX = 0;
+                        let stepY = 0;
+
                         if (currentDirection === 'across') {
-                            newX = x + 1;
+                            stepX = 1;
+                            stepY = 0;
                         } else {
-                            newY = y + 1;
-                        };
+                            stepX = 0;
+                            stepY = 1;
+                        }
+
+                        // move to next cell in current direction
+                        let newX = x + stepX;
+                        let newY = y + stepY;
+
+                        // skip over already filled cells
+                        while (hasInputCell(newX, newY)) {
+                            const nextCell = getCell(newX, newY);
+                            if (!nextCell) break;
+
+                            const nextInput = nextCell.querySelector('input');
+                            if (!nextInput) break;
+
+                            // stop at frst empty cell
+                            if (nextInput.value.trim() === '') {
+                                break;
+                            }
+
+                            // move further
+                            newX += stepX;
+                            newY += stepY;
+
+                            // if ran out of cells in this direction, stop
+                            if (!hasInputCell(newX, newY)) {
+                                clearActiveCells();
+                                activateCell(x, y);
+                                clearWordHighlights();
+                                return;
+                            }
+                        }
 
                         clearActiveCells();
                         activateCell(newX, newY);
