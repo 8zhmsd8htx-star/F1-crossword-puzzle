@@ -107,6 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // click highlight functionality
                 cellDiv.addEventListener('click', () => {
                     clearActiveCells();
+                    clearWordHighlights();
                     activateCell(
                         parseInt(cellDiv.dataset.x),
                         parseInt(cellDiv.dataset.y),
@@ -175,6 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     clearActiveCells();
+                    clearWordHighlights();
                     event.preventDefault();
                     activateCell(newX, newY);
                 });
