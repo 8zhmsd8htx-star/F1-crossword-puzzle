@@ -433,6 +433,62 @@ function checkWordAtCell(x, y) {
     setTimeout(() => {
         cells.forEach(c => c.cell.classList.remove(cssClass));
     }, 500);
+
+    // check for puzzle completion
+    if (isPuzzleComplete()) {
+        showPuzzleComplete();
+    }
+}
+
+// puzzle completion check
+function isPuzzleComplete() {
+    // check all clues
+    for (const [key, clueNum] of Object.entries(clueNumbers)) {
+        const answer = clueAnswers[clueNum];
+        const direction = clueDirection[key];
+
+        if (!answer || !direction) {
+            return false; // missing data
+        }
+
+        const [rowStr, colStr] = key.split('-');
+        const row = parseInt(rowStr, 10);
+        const col = parseInt(colStr, 10);
+
+        const cells = collectWordCells(col, row, direction);
+
+        if (cells.length !== answer.length) {
+            return false; // length mismatch
+        }
+
+        // check each letter
+        const userLetters = [];
+        for (const c of cells) {
+            const val = (c.input.value || '').trim().toUpperCase();
+            if (val === '') {
+                return false; // empty cell
+            }
+            userLetters.push(val);
+        }
+
+        const userAnswer = userLetters.join('');
+        if (userAnswer !== answer.toUpperCase()) {
+            return false; // incorrect answer
+        }
+    }
+    
+    return true; // all clues correct
+}
+
+// show completion banner
+function showPuzzleComplete() {
+    const banner = document.getElementById('completion-banner');
+    if (banner) {
+        banner.classList.add('completion-visible');
+    } else {
+        // fallback alert
+        alert("Congratulations! You completed the F1 crossword puzzle!");
+    }
 }
 
 // clear word highlights
