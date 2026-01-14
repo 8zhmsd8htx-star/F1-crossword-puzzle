@@ -485,10 +485,23 @@ function showPuzzleComplete() {
     const banner = document.getElementById('completion-banner');
     if (banner) {
         banner.classList.add('completion-visible');
+        enableBannerDismiss();
     } else {
         // fallback alert
         alert("Congratulations! You completed the F1 crossword puzzle!");
     }
+}
+
+// remove completion banner
+function enableBannerDismiss() {
+    const banner = document.getElementById('completion-banner');
+
+    if (banner.dataset.dismissReady === 'true') return;
+    banner.dataset.dismissReady = 'true';
+
+    banner.addEventListener('click', () => {
+        banner.classList.remove('completion-visible');
+    });
 }
 
 // clear word highlights
