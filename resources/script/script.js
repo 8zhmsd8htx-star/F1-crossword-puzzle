@@ -166,6 +166,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         clearActiveCells();
                         activateCell(newX, newY);
+
+                        clearWordHighlights();
                     }
                 });
 
@@ -177,6 +179,40 @@ document.addEventListener('DOMContentLoaded', () => {
             // append the cell to the grid container
             gridElement.appendChild(cellDiv);
         }
+    }
+
+    setupClueClicks();
+
+    function setupClueClicks() {
+        const clueItems = document.querySelectorAll('#questions li');
+
+        clueItems.forEach((li, index) => {
+            const clueNum = index + 1;
+            
+            // find the corresponding key for the clue number
+            const key = Object.keys(clueNumbers).find (k => clueNumbers[k] === clueNum);
+            if (!key) return; // skip if no matching key found
+
+            const [rowStr, colStr] = key.split('-');
+            const row = parseInt(rowStr, 10);
+            const col = parseInt(colStr, 10);
+
+            const direction = clueDirection[key];
+
+            li.addEventListener('click', () => {
+                const startX = col;
+                const startY = row;
+
+                // highlight the entire word for the clue
+                highlightWord(startX, startY, direction);
+
+                // scroll grid into view
+                gridElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                clearActiveCells();
+                activateCell(startX, startY, true);
+            });
+        });
     }
 });
 
@@ -236,4 +272,40 @@ function hasInputCell(x, y) {
     if (!cell) return false;
     const input = cell.querySelector("input");
     return !!input; // return true if input exists
+}
+
+// highlight word function
+function clearWordHighlights() {
+    document
+    .querySelectorAll('.cell.word-highlight')
+    .forEach(cell => cell.classList.remove('word-highlight'));
+}
+
+function highlightWord(startX, startY, direction) {
+    clearWordHighlights();
+
+    let dx = 0;
+    let dy = 0;
+
+    if (direction === 'across') {
+        dx = 1;
+        dy = 0;
+    } else if (direction === 'down') {
+        dx = 0;
+        dy = 1;
+    } else {
+        return; // invalid direction
+    }
+
+    let x = startX;
+    let y = startY;
+
+    // highlight cells in the specified direction
+    while (hasInputCell(x, y)) {
+        const cell = getCell(x, y);
+        cell.classList.add('word-highlight');
+
+        x += dx;
+        y += dy;
+    }
 }
