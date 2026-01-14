@@ -107,6 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // click highlight functionality
                 cellDiv.addEventListener('click', () => {
                     clearActiveCells();
+                    clearWordHighlights();
                     activateCell(
                         parseInt(cellDiv.dataset.x),
                         parseInt(cellDiv.dataset.y),
@@ -118,7 +119,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 input.addEventListener('keydown', (event) => {
                     const x = parseInt(cellDiv.dataset.x);
                     const y = parseInt(cellDiv.dataset.y);
+                    
+                    // __________BACKSPACE HANDLING__________
 
+                    if (event.key === 'Backspace') {
+                        const currentValue = input.value;
+                        if (currentValue !== '') {
+                            setTimeout(() => input.setSelectionRange(0, 0), 0); // let the backspace happen first
+                    } else {
+                        event.preventDefault(); // prevent default backspace behavior
+
+                        let newX = x;
+                        let newY = y;
+
+                        if (currentDirection === 'across') {
+                            newX = x - 1;
+                        } else {
+                            newY = y - 1;
+                        }
+
+                        const prevCell = getCell(newX, newY);
+                        if (prevCell) {
+                            const prevInput = prevCell.querySelector('input');
+                            prevInput.value = ''; // clear previous cell
+                            clearActiveCells();
+                            activateCell(newX, newY);
+                        }
+                    }
+
+                    return;
+                }
+
+                    // __________ARROW KEY HANDLING__________
                     let newX = x;
                     let newY = y;
 
@@ -144,6 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     clearActiveCells();
+                    clearWordHighlights();
                     event.preventDefault();
                     activateCell(newX, newY);
                 });
@@ -274,13 +307,13 @@ function hasInputCell(x, y) {
     return !!input; // return true if input exists
 }
 
-// highlight word function
 function clearWordHighlights() {
     document
     .querySelectorAll('.cell.word-highlight')
     .forEach(cell => cell.classList.remove('word-highlight'));
 }
 
+// highlight word function
 function highlightWord(startX, startY, direction) {
     clearWordHighlights();
 
