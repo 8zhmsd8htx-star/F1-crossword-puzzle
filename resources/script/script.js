@@ -53,6 +53,24 @@ const clueDirection = {
     '12-2': 'across',
 };
 
+// define clue answers
+const clueAnswers = {
+    1: 'PIASTRI',
+    2: 'REDBULL',
+    3: 'HAMILTON',
+    4: 'SILVERSTONE',
+    5: 'VETTEL',
+    6: 'LECLERC',
+    7: 'STROLL',
+    8: 'SOFT',
+    9: 'VERSTAPPEN',
+    10: 'ROSCOE',
+    11: 'BOTTAS',
+    12: 'BAKU',
+    13: 'CHINA',
+    14: 'ALONSO',
+};
+
 let currentSelectedCell = { x: 0, y: 0 };
 let currentDirection = 'across';
 
@@ -191,6 +209,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         let newX = x;
                         let newY = y;
 
+                        checkWordAtCell(x, y);
+
                         if (currentDirection === 'across') {
                             newX = x + 1;
                         } else {
@@ -199,7 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         clearActiveCells();
                         activateCell(newX, newY);
-
                         clearWordHighlights();
                     }
                 });
@@ -307,6 +326,116 @@ function hasInputCell(x, y) {
     return !!input; // return true if input exists
 }
 
+// find start of word
+function findWordStart(x, y, direction) {
+    let dx = 0;
+    let dy = 0;
+
+    if (direction === 'across') {
+        dx = -1;
+        dy = 0;
+    } else if (direction === 'down') {
+        dx = 0;
+        dy = -1;
+    } else {
+        return { x, y }; // invalid direction
+    }
+
+    let currX = x;
+    let currY = y;
+
+    while (hasInputCell(currX + dx, currY + dy)) {
+        currX += dx;
+        currY += dy;
+    }
+
+    return { x: currX, y: currY };
+}
+
+// collect all cells in a word
+function collectWordCells(startX, startY, direction) {
+    let dx = 0;
+    let dy = 0;
+
+    if (direction === 'across') {
+        dx = 1;
+        dy = 0;
+    } else if (direction === 'down') {
+        dx = 0;
+        dy = 1;
+    } else {
+        return []; // invalid direction
+    }
+
+    const cells = [];
+    let x = startX;
+    let y = startY;
+
+    while (hasInputCell(x, y)) {
+        const cell = getCell(x, y);
+        
+        const input = cell.querySelector('input');
+        cells.push({ x, y, cell, input });
+
+        x += dx;
+        y += dy;
+    }
+
+    return cells;
+}
+
+// check word answer
+function checkWordAtCell(x, y) {
+    const direction = currentDirection;
+
+    // find the start of the word
+    const start = findWordStart(x, y, direction);
+    const startX = start.x;
+    const startY = start.y;
+
+    // find clue number at start position
+    const key = `${startY}-${startX}`;
+    const clueNum = clueNumbers[key];
+    if (!clueNum) return; // no clue number found
+
+    const answer = clueAnswers[clueNum];
+    if (!answer) return; // no answer found
+
+    // collect all cells in the word
+    const cells = collectWordCells(startX, startY, direction);
+
+    // check if match answer length
+    if (cells.length !== answer.length) return;
+
+    let filled = true;
+    const userLetters = [];
+
+    // collect user input letters
+    for (const c of cells) {
+        const val = (c.input.value || '').trim().toUpperCase();
+
+        if (val === '') {
+            filled = false;
+            break;
+        }
+        userLetters.push(val);
+    }
+
+    if (!filled) return; // word not completely filled
+
+    const userAnswer = userLetters.join('');
+    const isCorrect = userAnswer === answer.toUpperCase();
+    const cssClass = isCorrect ? 'correct-word' : 'incorrect-word';
+
+    // apply correct/incorrect class to each cell
+    cells.forEach(c => c.cell.classList.add(cssClass));
+
+    setTimeout(() => {
+        cells.forEach(c => c.cell.classList.remove(cssClass));
+    }, 500);
+}
+
+// clear word highlights
 function clearWordHighlights() {
     document
     .querySelectorAll('.cell.word-highlight')
